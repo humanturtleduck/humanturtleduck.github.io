@@ -3,3 +3,18 @@ body {
     background-color: #ffc0c0;
   }
 
+p {
+ background-color: white;
+ padding-left: 5px;
+ padding-right: 5px;
+ display:grid;
+ text-align: center;
+
+
+}
+h1 {
+  text-align: center;
+  border-style: dotted;
+  background-color:white ;
+}
+
