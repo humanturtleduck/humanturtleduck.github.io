@@ -74,7 +74,7 @@ nav {
 }
 
 .btn:hover {
-  background: #e0e0e0;
+  background: #d1e4fa;
 }
 
 .section {
@@ -101,6 +101,7 @@ nav {
 
 .project-card:hover {
   transform: translateY(-5px);
+  background: #d1e4fa;
 }
 
 /*art section i dont freaking know*/
