@@ -8,15 +8,39 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
+<script>
+  const text = "Hi! I'm Beth";
+  const speed = 100; 
+  let i = 0;
+
+  function typeWriter() {
+    if (i < text.length) {
+      document.getElementById("typed-text").innerHTML += text.charAt(i);
+      i++;
+      setTimeout(typeWriter, speed);
+    }
+  }
+
+  window.onload = typeWriter;
+
+  
+</script>
+<script>
+  document.getElementById("scroll-to-about").addEventListener("click", function(e) {
+    e.preventDefault();
+    document.querySelector("#about").scrollIntoView({ behavior: "smooth" });
+  });
+</script>
+
 <body>
 
     <header>
         <nav>
-            <div class="logo">Humanturtleduck</div>
+            <div class="logo"><a href="index.html">Humanturtleduck</a></div>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
                 <li><a href="#projects">Projects</a></li>
-                <li><a href= blog.html>Blog</a></li>
+                <li><a href=blog.html>Blog</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -24,18 +48,21 @@
 
     <section class="hero">
         <div class="hero-text">
-            <h1>Hi! I'm Beth</h1>
-            <p>I'm known online as Humanturtleduck. I'm a developer, designer, and student passionate about tech and
-                creativity. </p>
-            <a href="#projects" class="btn">₍^. .^₎⟆</a>
+            <h1 id="typed-text"></h1>
+            <p>I'm known online as Humanturtleduck. I'm a developer, designer, and student passionate about tech, business, and. </p>
+            <a href="#about" class="btn" id="scroll-to-about">₍^. .^₎⟆ continue</a>
+            <a href="resume/BethenaChenResume.pdf" class="btn" target="_blank">resume 𐔌՞. .՞𐦯</a>
         </div>
     </section>
+    <section  id="about" ></section>
+    <br>
 
-    <section id="about" class="section">
-        <h2>About Me</h2>
+    <section class="section">
+        <h1>About Me</h1>
         <br>
         <p><strong>Pronouns:</strong> She/Her</p>
         <p><strong><i class="fas fa-language"></i> Languages:</strong> English, Mandarin, Cantonese</p>
+        <br>
         <br>
         <p>I’m a high school student based in Las Vegas, Nevada interested in computer science, AI, and design. I enjoy
             solving problems and
@@ -51,7 +78,7 @@
     </section>
 
     <section id="projects" class="section">
-        <h2>Projects</h2>
+        <h1>Projects</h1>
         <div class="projects-grid">
 
             <div class="project-card">
@@ -69,7 +96,7 @@
     </section>
 
     <section id="contact" class="section">
-        <h2>Contact</h2>
+        <h1>Contact</h1>
 
         <div class="contact-links">
             <p><i class="fas fa-envelope"></i>Email: Bethena.Yixing.Chen@Gmail.com</p>
