@@ -32,6 +32,38 @@
   });
 </script>
 
+</script>
+<style>
+    .dropdown-btn {
+        background-color: #f1f1f1;
+        color: #333;
+        cursor: pointer;
+        padding: 12px 16px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 16px;
+        transition: background-color 0.3s;
+        margin-bottom: 5px;
+    }
+
+    .dropdown-btn:hover {
+        background-color: #ddd;
+    }
+
+    .dropdown-container {
+        display: none;
+        background-color: #fafafa;
+        padding: 0 16px 12px 16px;
+        text-align: left;
+    }
+
+    .dropdown-container ul {
+        margin: 5px 0 0 20px;
+    }
+</style>
+
 <body>
 
     <header>
@@ -39,8 +71,8 @@
             <div class="logo"><a href="index.html">Humanturtleduck</a></div>
             <ul class="nav-links">
                 <li><a href="#about">About</a></li>
+                <li><a href="#Experience">Experience</a></li>
                 <li><a href="#projects">Projects</a></li>
-                <li><a href=blog.html>Blog</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -49,47 +81,171 @@
     <section class="hero">
         <div class="hero-text">
             <h1 id="typed-text"></h1>
-            <p>I'm known online as Humanturtleduck. I'm a developer, designer, and student passionate about technology, business, and humanities. </p>
+            <p> I go by humanturtleduck on the internet.
+                 I'm invested in the intersection of technology and finance.  </p>
             <a href="#about" class="btn" id="scroll-to-about">₍^. .^₎⟆ continue</a>
-            <a href="resume/BethenaChenResume.pdf" class="btn" target="_blank">resume 𐔌՞. .՞𐦯</a>
+            <a href="resume/bethchenresume.pdf" class="btn" target="_blank">resume 𐔌՞. .՞𐦯</a>
         </div>
     </section>
     <section  id="about" ></section>
     <br>
 
     <section class="section">
-        <h1>About Me</h1>
+        <h1>my TDLR</h1>
         <br>
-        <p><strong>Pronouns:</strong> She/Her</p>
-        <p><strong><i class="fas fa-language"></i> Languages:</strong> English, Mandarin, Cantonese</p>
-        <br>
-        <br>
+    
         <p>I’m a high school student based in Las Vegas, Nevada. I enjoy
-            solving problems and
-            building silly things. Reach out to me if you want to chat!</p>
+            solving problems and building silly (but sometimes nontrivial) things. Reach out to me if you want to chat!</p>
         <br>
-        <p>When I'm offline, you can find me playing my instruments, running, or gossiping with my friends. I'm also
-            really
-            into doomscrolling wikipedia and
+        <p>When I'm offline, you can find me practicing my instruments, modding games, or gossiping with my friends. I'm also
+            really into doomscrolling wikipedia and
             reading any types of literature (besides plays).</p>
 
 
 
-    </section>
+<section id="Experience" class="section">
+    <h1>Relevant Experience</h1>
+    <br>
+
+    <!-- Creative Lead -->
+    <button class="dropdown-btn">
+        <span class="arrow">▶</span> <strong>Creative Lead, For the Record Journal</strong>
+    </button>
+    <div class="dropdown-container">
+        <p>Jun. 2025 - Present</p>
+        <ul>
+            <li>Oversaw the creative development of a youth-lead advocacy journal. Managed a team of 4 developers and artists to develop the journal.</li>
+            <li>Designed and maintained the journal’s website using HTML, CSS, and JavaScript</li>
+
+        </ul>
+    <!--clark hs -->
+    </div>
+        <button class="dropdown-btn">
+        <span class="arrow">▶</span> <strong>Minecraft Java Mod Developer </strong>
+    </button>
+    <div class="dropdown-container">
+        <p>Nov. 2025 - Present</p>
+        <ul>
+            <li>Developed and maintained custom Minecraft Java Edition mods using Java and Forge.
+Contributed to bug fixes and feature improvements to open-source mods via GitHub pull requests. </li>
+           
+
+        </ul>
+    </div>    
+    <!-- intern -->
+    </div>
+        <button class="dropdown-btn">
+        <span class="arrow">▶</span> <strong>Research Intern, Frontlines Foundation</strong>
+    </button>
+    <div class="dropdown-container">
+        <p>May. 2025 - Aug. 2025</p>
+        <ul>
+            <li>Conducted in-depth research on internet safety policies,
+                platform regulations, and digital  trends to support advocacy 
+                initiatives and content development for a tech oriented non-profit. Cohort in process of publishing paper. </li>
+           
+
+        </ul>
+    </div>
+     <!--clark hs -->
+    </div>
+        <button class="dropdown-btn">
+        <span class="arrow">▶</span> <strong>Clark Bowl Clubs Officer, Ed W Clark High School</strong>
+    </button>
+    <div class="dropdown-container">
+        <p>Apr. 2025 - Present</p>
+        <ul>
+            <li>Created and managed documentation for a competitive Quiz Bowl club with 20+ member.
+Managed the Club social media and organized presences at school club fairs. I'm a mid tier player at best tbh</li>
+           
+
+        </ul>
+    </div>
+    </div>
+        <button class="dropdown-btn">
+        <span class="arrow">▶</span> <strong>Science Olympiad Competitor, Ed W Clark High School</strong>
+    </button>
+    <div class="dropdown-container">
+        <p>Aug. 2024 - Present</p>
+        <ul>
+            <li>built things and won some medals</li>
+            <li>placements: 1st Tower (UofMich, 2025), 3rd Bungee (Cornell, 2025), 4th Helicopter (Cornell, 2025), 3rd Helicopter (Nevada State, 2025)</li>
+        </ul>
+    </div>
+
+
+</section>
+
+<style>
+    .dropdown-btn {
+        background-color: #e5eaf1;
+        color: #000000;
+        cursor: pointer;
+        padding: 12px 16px;
+        width: 100%;
+        border: none;
+        text-align: left;
+        outline: none;
+        font-size: 16px;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s;
+        margin-bottom: 5px;
+        border-radius: 8px;
+    }
+
+    .dropdown-btn:hover {
+        background-color: rgb(192, 189, 189)af1d;
+    }
+
+    .dropdown-btn .arrow {
+        display: inline-block;
+        margin-right: 10px;
+        transition: transform 0.3s;
+    }
+
+    .dropdown-btn.active .arrow {
+        transform: rotate(90deg); /* rotates arrow to point down */
+    }
+
+    .dropdown-container {
+        display: none;
+        background-color: #fafafa;
+        padding: 0 16px 12px 16px;
+        text-align: left;
+        overflow: hidden;
+    }
+
+    .dropdown-container ul {
+        margin: 5px 0 0 20px;
+    }
+</style>
+
+<script>
+    const dropdowns = document.querySelectorAll('.dropdown-btn');
+    dropdowns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            this.classList.toggle('active');
+            const container = this.nextElementSibling;
+
+            if (container.style.display === 'block') {
+                container.style.display = 'none';
+            } else {
+                container.style.display = 'block';
+            }
+        });
+    });
+</script>
+
 
     <section id="projects" class="section">
         <h1>Projects</h1>
         <div class="projects-grid">
-
-            <a href="https://github.com/humanturtleduck/buildingsmod" target="_blank" class="project-card">
-                <h3>MC generation Mod</h3>
-                <p>A minecraft mod that generates historically accurate ancient civilizations in minecraft. (wip) </p>
+            <a href="https://github.com/humanturtleduck/meowl" target="_blank" class="project-card">
+                <h3>Meowl</h3>
+                <p>poorly modded meowls in minecraft. utilized java, blockbench, and forge to hallucinate this up. used for practice</p>
             </a>
-            <a href="art.html" class="project-card">
-                <h3>Doodles & Art</h3>
-                <p>I'm no professional tho :( </p>
-            </a>
-            <!-- PROJECT CARDS HEREEERERERER -->
+            
         </div>
     </section>
 
