@@ -44,6 +44,8 @@ nav {
 }
 
 .hero {
+  position: relative;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -57,6 +59,33 @@ nav {
 .hero h1 {
   font-size: 3rem;
   margin-bottom: 10px;
+}
+
+.spinning-cat {
+  position: absolute;
+  top: 18%;
+  right: 12%;
+  width: 120px;
+  height: 120px;
+  display: grid;
+  place-items: center;
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.95);
+  background: rgba(255, 255, 255, 0.12);
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-radius: 50%;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.16);
+  animation: cat-spin 8s linear infinite;
+  backdrop-filter: blur(6px);
+}
+
+@keyframes cat-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .hero p {

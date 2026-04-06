@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zipf's Law Visualizer</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0d0d;
+    --surface: #141414;
+    --surface2: #1a1a1a;
+    --border: #2a2a2a;
+    --accent: #c8f060;
+    --accent2: #60d0f0;
+    --accent3: #f060a0;
+    --text: #e8e4dc;
+    --muted: #6a6660;
+    --hapax: #f06060;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+
+  /* grain overlay */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  .wrap { position: relative; z-index: 1; max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+
+  /* header */
+  header {
+    padding: 3rem 0 2rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 2.5rem;
+  }
+  .header-inner { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; flex-wrap: wrap; }
+  .title-block {}
+  .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.4rem, 5vw, 3.8rem);
+    font-weight: 300;
+    line-height: 1.05;
+    color: var(--text);
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+  .subtitle {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 0.6rem;
+    max-width: 420px;
+  }
+  .stats-header {
+    display: flex; gap: 2rem; flex-wrap: wrap;
+  }
+  .stat {
+    text-align: right;
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: 2rem;
+    font-weight: 300;
+    color: var(--accent);
+    line-height: 1;
+    transition: all 0.4s ease;
+  }
+  .stat-label { font-size: 11px; color: var(--muted); margin-top: 2px; letter-spacing: 0.05em; }
+
+  /* main grid */
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  @media (max-width: 720px) { .grid { grid-template-columns: 1fr; } }
+
+  /* panels */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .panel-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.75rem 1rem 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* input */
+  textarea {
+    width: 100%;
+    min-height: 220px;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    padding: 1rem;
+    resize: vertical;
+  }
+  textarea::placeholder { color: var(--muted); }
+  .input-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--border);
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .sample-btns { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+  .sample-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .sample-btn:hover { color: var(--accent); border-color: var(--accent); }
+  .analyze-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    background: var(--accent);
+    color: #0d0d0d;
+    border: none;
+    border-radius: 2px;
+    padding: 6px 18px;
+    cursor: pointer;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    transition: opacity 0.15s, transform 0.1s;
+  }
+  .analyze-btn:hover { opacity: 0.85; }
+  .analyze-btn:active { transform: scale(0.97); }
+
+  /* controls */
+  .controls {
+    padding: 1rem;
+    display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .control-group { display: flex; align-items: center; gap: 0.5rem; }
+  .control-group label { font-size: 11px; color: var(--muted); }
+  .toggle-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 3px 10px;
+    cursor: pointer;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+  .toggle-btn.active { color: var(--accent2); border-color: var(--accent2); }
+  select {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    padding: 3px 8px;
+    cursor: pointer;
+  }
+
+  /* chart */
+  #chart-wrap {
+    padding: 1rem;
+    position: relative;
+    min-height: 320px;
+  }
+  canvas { display: block; }
+  .chart-empty {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--muted); font-size: 13px; font-style: italic;
+  }
+
+  /* token table */
+  .token-panel { grid-column: 1 / -1; }
+  .token-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1px;
+    background: var(--border);
+    max-height: 360px;
+    overflow-y: auto;
+  }
+  .token-grid::-webkit-scrollbar { width: 4px; }
+  .token-grid::-webkit-scrollbar-track { background: var(--surface); }
+  .token-grid::-webkit-scrollbar-thumb { background: var(--border); }
+  .token-cell {
+    background: var(--surface);
+    padding: 0.6rem 0.8rem;
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: 0.5rem;
+    animation: fadeIn 0.3s ease both;
+  }
+  .token-cell.hapax { background: color-mix(in srgb, var(--hapax) 8%, var(--surface)); }
+  .token-word {
+    font-size: 13px;
+    color: var(--text);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+  .token-cell.hapax .token-word { color: var(--hapax); }
+  .token-count {
+    font-size: 11px;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+  .token-bar-wrap {
+    height: 2px; background: var(--border); border-radius: 1px; margin-top: 4px;
+  }
+  .token-bar { height: 2px; border-radius: 1px; background: var(--accent2); }
+  .token-cell.hapax .token-bar { background: var(--hapax); }
+
+  /* hapax info */
+  .hapax-info {
+    display: flex; align-items: center; gap: 1.5rem; padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 11px; color: var(--muted); flex-wrap: wrap;
+  }
+  .hapax-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--hapax); flex-shrink: 0; }
+  .hapax-count { color: var(--hapax); font-weight: 500; }
+
+  /* zipf law note */
+  .law-box {
+    margin: 1.5rem 0;
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 1rem 1.2rem;
+    background: var(--surface);
+    border-radius: 0 4px 4px 0;
+    display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
+  }
+  .law-formula {
+    font-family: 'Fraunces', serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .law-text { font-size: 12px; color: var(--muted); max-width: 480px; line-height: 1.7; }
+  .law-text strong { color: var(--text); font-weight: 400; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    margin-top: 3rem;
+    padding: 1.5rem 0;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: var(--muted); flex-wrap: wrap; gap: 1rem;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .shimmer {
+    background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1s infinite;
+  }
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="header-inner">
+      <div class="title-block">
+        <div class="eyebrow">computational linguistics</div>
+        <h1>Zipf's <em>Law</em><br>Visualizer</h1>
+        <p class="subtitle">Paste any text to see word frequency distribution, type-token ratio, and hapax legomena.</p>
+      </div>
+      <div class="stats-header">
+        <div class="stat">
+          <div class="stat-num" id="stat-tokens">—</div>
+          <div class="stat-label">tokens</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-types">—</div>
+          <div class="stat-label">types</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-ttr">—</div>
+          <div class="stat-label">TTR</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" id="stat-hapax">—</div>
+          <div class="stat-label">hapax</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- Input -->
+    <div class="panel" style="grid-column: 1 / -1;">
+      <div class="panel-label">input text</div>
+      <textarea id="input" placeholder="Paste any text here — a novel excerpt, article, speech, song lyrics…"></textarea>
+      <div class="input-footer">
+        <div class="sample-btns">
+          <button class="sample-btn" onclick="loadSample('moby')">Moby-Dick opening</button>
+          <button class="sample-btn" onclick="loadSample('hamlet')">Hamlet soliloquy</button>
+          <button class="sample-btn" onclick="loadSample('einstein')">Einstein quote</button>
+        </div>
+        <button class="analyze-btn" onclick="analyze()">analyze →</button>
+      </div>
+    </div>
+
+    <!-- Chart -->
+    <div class="panel">
+      <div class="panel-label">frequency distribution</div>
+      <div class="controls">
+        <div class="control-group">
+          <label>scale</label>
+          <button class="toggle-btn active" id="btn-log" onclick="setScale('log')">log–log</button>
+          <button class="toggle-btn" id="btn-linear" onclick="setScale('linear')">linear</button>
+        </div>
+        <div class="control-group">
+          <label>top words</label>
+          <select id="top-n" onchange="redrawChart()">
+            <option value="30">30</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
+            <option value="200">200</option>
+          </select>
+        </div>
+        <div class="control-group">
+          <label>stopwords</label>
+          <button class="toggle-btn" id="btn-stop" onclick="toggleStop()">filter</button>
+        </div>
+      </div>
+      <div id="chart-wrap">
+        <canvas id="chart"></canvas>
+        <div class="chart-empty" id="chart-empty">enter text and click analyze</div>
+      </div>
+    </div>
+
+    <!-- Type breakdown -->
+    <div class="panel" style="display:flex; flex-direction:column;">
+      <div class="panel-label">lexical metrics</div>
+      <div style="padding:1rem; flex:1;">
+        <div id="metrics-content" style="color:var(--muted); font-size:12px; font-style:italic;">run analysis to see metrics</div>
+      </div>
+    </div>
+
+    <!-- Token table -->
+    <div class="panel token-panel">
+      <div class="panel-label">word frequency table <span id="table-subtitle" style="color:var(--muted);font-size:10px;"></span></div>
+      <div class="token-grid" id="token-grid">
+        <div style="grid-column:1/-1; padding:1rem; color:var(--muted); font-size:12px; font-style:italic;">run analysis to see word frequencies</div>
+      </div>
+      <div class="hapax-info" id="hapax-info" style="display:none;">
+        <div class="hapax-dot"></div>
+        <span>hapax legomena: words appearing exactly once</span>
+        <span class="hapax-count" id="hapax-count-label"></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="law-box">
+    <div class="law-formula">f ∝ 1/r</div>
+    <div class="law-text">
+      <strong>Zipf's Law</strong> states that in any natural language corpus, the frequency of a word is inversely proportional to its rank. The most common word appears roughly <strong>twice as often</strong> as the second most common, three times as often as the third, and so on — a power law that holds across languages, texts, and even music.
+      <br><br>
+      <strong>Hapax legomena</strong> (from Greek: "said only once") are words occurring exactly once in a corpus. In most natural texts, over <strong>40–60%</strong> of unique words are hapax. High hapax ratios suggest rich vocabulary or sparse data.
+    </div>
+  </div>
+
+  <footer>
+    <span>zipf's law visualizer </span>
+    <span>type-token ratio · hapax legomena · power law distribution</span>
+  </footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+const SAMPLES = {
+  moby: `Call me Ishmael. Some years ago—never mind how long precisely—having little or no money in my purse, and nothing particular to interest me on shore, I thought I would sail about a little and see the watery part of the world. It is a way I have of driving off the spleen and regulating the circulation. Whenever I find myself growing grim about the mouth; whenever it is a damp, drizzly November in my soul; whenever I find myself involuntarily pausing before coffin warehouses, and bringing up the rear of every funeral I meet; and especially whenever my hypos get such an upper hand of me, that it requires a strong moral principle to prevent me from deliberately stepping into the street, and methodically knocking people's hats off—then, I account it high time to get to sea as soon as I can. This is my substitute for pistol and ball. With a philosophical flourish Cato throws himself upon his sword; I quietly take to the ship.`,
+
+  hamlet: `To be, or not to be, that is the question: Whether 'tis nobler in the mind to suffer the slings and arrows of outrageous fortune, or to take arms against a sea of troubles and by opposing end them. To die—to sleep, no more; and by a sleep to say we end the heartache and the thousand natural shocks that flesh is heir to: 'tis a consummation devoutly to be wish'd. To die, to sleep; to sleep, perchance to dream—ay, there's the rub, for in that sleep of death what dreams may come when we have shuffled off this mortal coil, must give us pause. There's the respect that makes calamity of so long life. For who would bear the whips and scorns of time, the oppressor's wrong, the proud man's contumely, the pangs of dispriz'd love, the law's delay, the insolence of office, and the spurns that patient merit of the unworthy takes?`,
+
+  einstein: `Imagination is more important than knowledge. Knowledge is limited. Imagination encircles the world. The most beautiful thing we can experience is the mysterious. It is the source of all true art and science. He to whom the emotion is a stranger, who can no longer pause to wonder and stand rapt in awe, is as good as dead: his eyes are closed. The insight into the mystery of life, coupled though it be with fear, has also given rise to religion. To know what is impenetrable to us really exists, manifesting itself as the highest wisdom and the most radiant beauty, which our dull faculties can comprehend only in their most primitive forms—this knowledge, this feeling, is at the center of true religiousness. A human being is a part of the whole called by us universe, a part limited in time and space. He experiences himself, his thoughts and feeling as something separated from the rest, a kind of optical delusion of his consciousness.`
+};
+
+const STOPWORDS = new Set(['the','a','an','and','or','but','in','on','at','to','for','of','with','by','from','is','it','its','was','are','were','be','been','being','have','has','had','do','does','did','will','would','could','should','may','might','shall','that','this','these','those','i','you','he','she','we','they','me','him','her','us','them','my','your','his','our','their','not','as','if','so','than','then','when','there','what','which','who','how','all','each','every','both','more','some','such','no','nor','too','very','just','can','about','up','out','into','over','after','before','between','through','during','under','while','also','only','own','same','other','s','t','re','ve','ll','d','m']);
+
+let chartInst = null;
+let currentData = [];
+let useLog = true;
+let filterStop = false;
+
+function loadSample(key) {
+  document.getElementById('input').value = SAMPLES[key];
+  analyze();
+}
+
+function tokenize(text) {
+  return text.toLowerCase()
+    .replace(/['']/g, "'")
+    .replace(/[—–]/g, ' ')
+    .match(/\b[a-z']+\b/g) || [];
+}
+
+function analyze() {
+  const text = document.getElementById('input').value.trim();
+  if (!text) return;
+
+  const tokens = tokenize(text);
+  const freq = {};
+  tokens.forEach(w => { freq[w] = (freq[w] || 0) + 1; });
+
+  const sorted = Object.entries(freq).sort((a,b) => b[1]-a[1]);
+  currentData = sorted;
+
+  const totalTokens = tokens.length;
+  const totalTypes = sorted.length;
+  const ttr = (totalTypes / totalTokens * 100).toFixed(1);
+  const hapaxList = sorted.filter(([,c]) => c === 1);
+  const hapaxCount = hapaxList.length;
+
+  animateStat('stat-tokens', totalTokens.toLocaleString());
+  animateStat('stat-types', totalTypes.toLocaleString());
+  animateStat('stat-ttr', ttr + '%');
+  animateStat('stat-hapax', hapaxCount.toLocaleString());
+
+  redrawChart();
+  renderTable(sorted, hapaxCount, totalTokens);
+  renderMetrics(sorted, tokens, totalTokens, totalTypes, ttr, hapaxCount, hapaxList);
+}
+
+function animateStat(id, val) {
+  const el = document.getElementById(id);
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(6px)';
+  setTimeout(() => {
+    el.textContent = val;
+    el.style.transition = 'all 0.4s ease';
+    el.style.opacity = '1';
+    el.style.transform = '';
+  }, 100);
+}
+
+function getDisplayData() {
+  const n = parseInt(document.getElementById('top-n').value);
+  let data = currentData;
+  if (filterStop) data = data.filter(([w]) => !STOPWORDS.has(w));
+  return data.slice(0, n);
+}
+
+function setScale(s) {
+  useLog = s === 'log';
+  document.getElementById('btn-log').classList.toggle('active', useLog);
+  document.getElementById('btn-linear').classList.toggle('active', !useLog);
+  redrawChart();
+}
+
+function toggleStop() {
+  filterStop = !filterStop;
+  document.getElementById('btn-stop').classList.toggle('active', filterStop);
+  redrawChart();
+  if (currentData.length) renderTable(currentData, currentData.filter(([,c])=>c===1).length, currentData.reduce((a,[,c])=>a+c,0));
+}
+
+function redrawChart() {
+  if (!currentData.length) return;
+  document.getElementById('chart-empty').style.display = 'none';
+
+  const display = getDisplayData();
+  const labels = display.map(([w]) => w);
+  const values = display.map(([,c]) => c);
+
+  // Ideal Zipf line: f(r) = f(1) / r
+  const maxFreq = values[0] || 1;
+  const zipfIdeal = display.map((_,i) => maxFreq / (i+1));
+
+  const wrap = document.getElementById('chart-wrap');
+  const canvas = document.getElementById('chart');
+  canvas.width = wrap.clientWidth - 32;
+  canvas.height = 280;
+
+  const accentColor = '#c8f060';
+  const accent2 = '#60d0f0';
+
+  if (chartInst) chartInst.destroy();
+
+  chartInst = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'frequency',
+          data: values,
+          backgroundColor: values.map((v,i) => {
+            const t = i/values.length;
+            return `rgba(96, 208, 240, ${0.9 - t*0.5})`;
+          }),
+          borderColor: 'transparent',
+          borderRadius: 2,
+          order: 2
+        },
+        {
+          label: 'ideal Zipf',
+          data: zipfIdeal,
+          type: 'line',
+          borderColor: accentColor,
+          borderWidth: 1.5,
+          borderDash: [4,3],
+          pointRadius: 0,
+          fill: false,
+          order: 1,
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: false,
+      animation: { duration: 400 },
+      plugins: {
+        legend: {
+          labels: { color: '#6a6660', font: { family: 'DM Mono', size: 11 }, boxWidth: 12 }
+        },
+        tooltip: {
+          backgroundColor: '#1a1a1a',
+          borderColor: '#2a2a2a',
+          borderWidth: 1,
+          titleColor: '#e8e4dc',
+          bodyColor: '#6a6660',
+          titleFont: { family: 'DM Mono', size: 12 },
+          bodyFont: { family: 'DM Mono', size: 11 },
+          callbacks: {
+            label: ctx => {
+              if (ctx.datasetIndex === 0) return ` count: ${ctx.raw}`;
+              return ` zipf ideal: ${ctx.raw.toFixed(1)}`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          type: 'category',
+          ticks: {
+            color: '#6a6660',
+            font: { family: 'DM Mono', size: 10 },
+            maxRotation: 45,
+            autoSkip: true,
+            maxTicksLimit: 20
+          },
+          grid: { color: '#1e1e1e' },
+          border: { color: '#2a2a2a' }
+        },
+        y: {
+          type: useLog ? 'logarithmic' : 'linear',
+          ticks: {
+            color: '#6a6660',
+            font: { family: 'DM Mono', size: 10 },
+            callback: v => v >= 1000 ? (v/1000)+'k' : v
+          },
+          grid: { color: '#1e1e1e' },
+          border: { color: '#2a2a2a' }
+        }
+      }
+    }
+  });
+}
+
+function renderTable(sorted, hapaxCount, totalTokens) {
+  const grid = document.getElementById('token-grid');
+  const maxCount = sorted[0]?.[1] || 1;
+  let display = filterStop ? sorted.filter(([w]) => !STOPWORDS.has(w)) : sorted;
+
+  document.getElementById('table-subtitle').textContent = filterStop ? '(stopwords filtered)' : '';
+
+  grid.innerHTML = display.map(([word, count], i) => {
+    const isHapax = count === 1;
+    const pct = (count / maxCount * 100).toFixed(1);
+    const rankLabel = i < 10 ? `#${i+1}` : '';
+    return `<div class="token-cell ${isHapax ? 'hapax' : ''}" style="animation-delay:${Math.min(i*8,200)}ms">
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;align-items:baseline;justify-content:space-between;">
+          <span class="token-word" title="${word}">${word}</span>
+          <span class="token-count">${count}×</span>
+        </div>
+        <div class="token-bar-wrap"><div class="token-bar" style="width:${pct}%"></div></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const hapaxInfo = document.getElementById('hapax-info');
+  hapaxInfo.style.display = 'flex';
+  document.getElementById('hapax-count-label').textContent = `${hapaxCount} words (${(hapaxCount/sorted.length*100).toFixed(1)}% of types)`;
+}
+
+function renderMetrics(sorted, tokens, totalTokens, totalTypes, ttr, hapaxCount, hapaxList) {
+  const topWords = sorted.slice(0,10);
+  const top10Coverage = topWords.reduce((a,[,c])=>a+c,0);
+  const top10Pct = (top10Coverage/totalTokens*100).toFixed(1);
+
+  const avgWordLen = (tokens.reduce((a,w)=>a+w.length,0)/tokens.length).toFixed(2);
+  const freqs = sorted.map(([,c])=>c);
+  const expectedZipf = freqs[0];
+  const actualSecond = freqs[1] || 0;
+  const zipfRatio = freqs[1] ? (freqs[0]/freqs[1]).toFixed(2) : '—';
+
+  // Vocabulary richness: hapax / total types
+  const hapaxRatio = (hapaxCount/totalTypes*100).toFixed(1);
+
+  const content = document.getElementById('metrics-content');
+  content.innerHTML = `
+    <div style="display:grid;gap:1.2rem;">
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">vocabulary richness</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          ${metric('Type-token ratio', ttr, 'unique words / total words')}
+          ${metric('Hapax ratio', hapaxRatio+'%', 'once-only types / all types')}
+          ${metric('Avg word length', avgWordLen+' chars', '')}
+          ${metric('Total types', totalTypes.toLocaleString(), 'unique word forms')}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">frequency distribution</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;">
+          ${metric('Top word', '"'+sorted[0][0]+'"', sorted[0][1]+' occurrences')}
+          ${metric('Rank-1/rank-2 ratio', zipfRatio, 'ideal Zipf = 2.0')}
+          ${metric('Top 10 coverage', top10Pct+'%', 'of all tokens')}
+          ${metric('Rank-50 frequency', sorted[49]?sorted[49][1]+'×':'—', '')}
+        </div>
+      </div>
+      <div>
+        <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:.4rem;">sample hapax legomena</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.3rem;">
+          ${hapaxList.slice(0,18).map(([w])=>`<span style="font-size:11px;color:var(--hapax);border:1px solid color-mix(in srgb,var(--hapax) 30%,transparent);border-radius:2px;padding:2px 8px;">${w}</span>`).join('')}
+          ${hapaxList.length > 18 ? `<span style="font-size:11px;color:var(--muted);">+${hapaxList.length-18} more</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+function metric(label, value, sub) {
+  return `<div style="background:var(--surface2);border:1px solid var(--border);border-radius:3px;padding:.5rem .7rem;">
+    <div style="font-size:10px;color:var(--muted);margin-bottom:.2rem;">${label}</div>
+    <div style="font-size:15px;color:var(--accent2);font-family:'Fraunces',serif;font-weight:300;">${value}</div>
+    ${sub ? `<div style="font-size:10px;color:var(--muted);margin-top:1px;">${sub}</div>` : ''}
+  </div>`;
+}
+
+// Auto-resize chart on window resize
+window.addEventListener('resize', () => { if (currentData.length) redrawChart(); });
+</script>
+</body>
+</html>
