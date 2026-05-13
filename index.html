@@ -1,215 +1,511 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>humanturtleduck</title>
-    <link rel="stylesheet" href="style.css" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>bethena chen</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --white: #ffffff;
+      --ink: #1c1c1c;
+      --muted: #666;
+      --light: #aaa;
+      --border: #e8e8e8;
+      --nav-h: 56px;
+      --footer-h: 52px;
+      --max-w: 900px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Lora', serif;
+      background: var(--white);
+      color: var(--ink);
+      min-height: 100vh;
+      padding-bottom: var(--footer-h);
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      height: var(--nav-h);
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 56px;
+      gap: 48px;
+    }
+
+    .nav-links {
+      display: flex; gap: 44px; list-style: none;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 400;
+      color: var(--ink);
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--muted); }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      padding-top: var(--nav-h);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding-left: 56px;
+      padding-right: 56px;
+    }
+
+    .hero-inner {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 80px;
+      align-items: center;
+      max-width: var(--max-w);
+      width: 100%;
+    }
+
+    /* ── PHOTO ── */
+    .photo-wrap {
+      display: flex;
+      justify-content: center;
+    }
+
+    .photo-circle {
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #e8e6e1;
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: opacity 0.2s, transform 0.18s;
+      box-shadow: 0 10px 25px rgba(20,20,30,0.08);
+      border: 4px solid #fff;
+    }
+
+    .photo-circle:hover .photo-overlay { opacity: 1; }
+
+    .photo-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.18);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.2s;
+      color: #fff;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+    }
+
+    .photo-circle img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: block;
+      transform-origin: center;
+      transition: transform 0.25s ease;
+    }
+
+    .photo-circle:hover img { transform: scale(1.03); }
+
+    .photo-placeholder-icon {
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 10px;
+      color: #bbb;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.7rem;
+      letter-spacing: 0.1em;
+    }
+
+    #photo-input { display: none; }
+
+    /* ── INTRO TEXT ── */
+    .intro { }
+
+    .intro-greeting {
+      font-family: 'Lora', serif;
+      font-size: 1.15rem;
+      font-weight: 500;
+      margin-bottom: 20px;
+      color: var(--ink);
+    }
+
+    .intro-body {
+      font-family: 'Lora', serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      color: var(--ink);
+      margin-bottom: 18px;
+      font-weight: 400;
+    }
+
+    .intro-body a {
+      color: #6b5b8f;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .intro-body a:hover { color: #4a3d6b; }
+
+    /* ── SOCIAL ICONS ── */
+    .socials {
+      display: flex;
+      gap: 22px;
+      align-items: center;
+      margin-top: 28px;
+    }
+
+    .social-icon {
+      color: var(--muted);
+      transition: color 0.2s;
+      display: flex;
+      align-items: center;
+    }
+
+    .social-icon:hover { color: var(--ink); }
+
+    .social-icon svg { width: 22px; height: 22px; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      max-width: var(--max-w);
+      margin: 0 auto;
+    }
+
+    /* ── SECTIONS ── */
+    section {
+      padding: 80px 56px;
+      max-width: calc(var(--max-w) + 112px);
+      margin: 0 auto;
+    }
+
+    .section-heading {
+      font-family: 'Lora', serif;
+      font-size: 1.35rem;
+      font-weight: 500;
+      margin-bottom: 40px;
+      color: var(--ink);
+    }
+
+    /* ── EXPERIENCE ── */
+    .exp-list { display: flex; flex-direction: column; }
+
+    .exp-item {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 32px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .exp-item:first-child { border-top: 1px solid var(--border); }
+    .exp-item.visible { opacity: 1; transform: none; }
+
+    .exp-period {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.8rem;
+      color: var(--light);
+      font-weight: 400;
+      padding-top: 3px;
+      letter-spacing: 0.02em;
+    }
+
+    .exp-right {}
+
+    .exp-role {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .exp-company {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-bottom: 10px;
+      font-weight: 400;
+    }
+
+    .exp-desc {
+      font-family: 'Lora', serif;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--muted);
+    }
+
+    /* ── PROJECTS ── */
+    .projects-list { display: flex; flex-direction: column; }
+
+    .project-item {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      gap: 32px;
+      padding: 28px 0;
+      border-bottom: 1px solid var(--border);
+      opacity: 0;
+      transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+
+    .project-item:first-child { border-top: 1px solid var(--border); }
+    .project-item.visible { opacity: 1; transform: none; }
+
+    .project-tag {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: var(--light);
+      font-weight: 400;
+      padding-top: 3px;
+    }
+
+    .project-name {
+      font-family: 'Lora', serif;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .project-desc {
+      font-family: 'Lora', serif;
+      font-size: 0.92rem;
+      line-height: 1.75;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .project-link {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      transition: color 0.2s;
+    }
+
+    .project-link:hover { color: var(--ink); }
+
+    /* ── FOOTER ── */
+    footer {
+      position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+      height: var(--footer-h);
+      background: rgba(255,255,255,0.97);
+      border-top: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      gap: 40px;
+      padding: 0 56px;
+    }
+
+    .footer-contact {
+      text-decoration: none;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.78rem;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 7px;
+      letter-spacing: 0.02em;
+      transition: color 0.2s;
+    }
+
+    .footer-contact:hover { color: var(--ink); }
+
+    .footer-dot {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--border);
+    }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .hero-inner { animation: fadeIn 0.7s ease both; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 720px) {
+      nav { padding: 0 24px; gap: 28px; }
+      .nav-links { gap: 28px; }
+      .hero { padding: 0 24px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+      .photo-wrap { justify-content: center; }
+      .photo-circle { width: 200px; height: 200px; }
+      .socials { justify-content: center; }
+      section { padding: 60px 24px; }
+      .exp-item, .project-item { grid-template-columns: 1fr; gap: 6px; }
+      footer { gap: 20px; padding: 0 24px; flex-wrap: wrap; }
+    }
+  </style>
 </head>
-
-<script>
-  const text = "hello i am bethena chen";
-  const speed = 100; 
-  let i = 0;
-
-  function typeWriter() {
-    if (i < text.length) {
-      document.getElementById("typed-text").innerHTML += text.charAt(i);
-      i++;
-      setTimeout(typeWriter, speed);
-    }
-  }
-
-  window.onload = typeWriter;
-
-  
-</script>
-<script>
-  document.getElementById("scroll-to-about").addEventListener("click", function(e) {
-    e.preventDefault();
-    document.querySelector("#about").scrollIntoView({ behavior: "smooth" });
-  });
-</script>
-
-</script>
-<style>
-    .dropdown-btn {
-        background-color: #f1f1f1;
-        color: #333;
-        cursor: pointer;
-        padding: 12px 16px;
-        width: 100%;
-        border: none;
-        text-align: left;
-        outline: none;
-        font-size: 16px;
-        transition: background-color 0.3s;
-        margin-bottom: 5px;
-    }
-
-    .dropdown-btn:hover {
-        background-color: #ddd;
-    }
-
-    .dropdown-container {
-        display: none;
-        background-color: #fafafa;
-        padding: 0 16px 12px 16px;
-        text-align: left;
-    }
-
-    .dropdown-container ul {
-        margin: 5px 0 0 20px;
-    }
-</style>
-
 <body>
 
-    <header>
-        <nav>
-            <div class="logo"><a href="index.html">Humanturtleduck</a></div>
-            <ul class="nav-links">
-                <li><a href="#about">About</a></li>
-                <li><a href="#Experience">Experience</a></li>
-                <li><a href="#projects">Projects</a></li>
-                <li><a href="#contact">Contact</a></li>
-                <li><a href="blog.html">Blog</a></li>
-            </ul>
-        </nav>
-    </header>
+<!-- NAV -->
+<nav>
+  <ul class="nav-links">
+    <li><a href="#experience">experience</a></li>
+    <li><a href="#projects">projects</a></li>
+  </ul>
+</nav>
 
-    <section class="hero">
-        <div class="hero-text">
-            <h1 id="typed-text"></h1>
-            <p> I go by humanturtleduck on the internet. I think linguistics and computers are neat.   </p>
-            <a href="#about" class="btn" id="scroll-to-about">₍^. .^₎⟆ continue</a>
-            <a href="resume/bethchenresume.pdf" class="btn" target="_blank">resume 𐔌՞. .՞𐦯</a>
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+
+    <!-- PHOTO LEFT -->
+    <div class="photo-wrap">
+      <div class="photo-circle" id="photo-circle" onclick="document.getElementById('photo-input').click()">
+        <div class="photo-placeholder-icon" id="ph-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <rect x="3" y="3" width="18" height="18" rx="9"/>
+            <circle cx="12" cy="10" r="3"/>
+            <path d="M6 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/>
+          </svg>
         </div>
-    </section>
-    <section  id="about" ></section>
-    <br>
+        <img id="preview-img" src="image/images.jpeg" alt="cat staring into your soul" />
+        <input type="file" id="photo-input" accept="image/*" style="display:none" />
+      </div>
+    </div>
 
-    <section class="section">
-        <h1>my TDLR</h1>
-        <br>
-    
-        <p>I’m a high school student based in Las Vegas. I enjoy
-            solving complex problems and building silly (and typically nontrivial) things.</p>
-        <br>
-        <p>When I'm offline (which is pretty rare), you can find me practicing my instruments or going outside. I'm also
-            really into doomscrolling wikipedia and reading fiction.</p>
+    <!-- TEXT RIGHT -->
+    <div class="intro">
+      <p class="intro-greeting">hi, i'm <strong>bethena chen</strong></p>
+      <p class="intro-body">i'm a high school student based in nevada. i will be interning at nasa's csr and i like to build things.</p>
+      <p class="intro-body">uh i think i like to go outside and see places. i love meeting people doing cool things, and i'm always happy to chat!</p>
 
+      <div class="socials">
+        <!-- LinkedIn -->
+        <a class="social-icon" href="https://www.linkedin.com/in/bethena-chen-4a711336a/" target="_blank" title="LinkedIn">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+        </a>
+        <!-- GitHub -->
+        <a class="social-icon" href="https://github.com/humanturtleduck" target="_blank" title="GitHub">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 00-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0020 4.77 5.07 5.07 0 0019.91 1S18.73.65 16 2.48a13.38 13.38 0 00-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 005 4.77a5.44 5.44 0 00-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 009 18.13V22"/></svg>
+        </a>
+        <!-- Instagram -->
+        <a class="social-icon" href="https://instagram.com/bethenachen" target="_blank" title="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <!-- Email -->
+        <a class="social-icon" href="mailto:chenb26@unlv.nevada.edu" title="chenb26@unlv.nevada.edu">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+        </a>
+      </div>
+    </div>
 
+  </div>
+</div>
 
-<section id="Experience" class="section">
-    <h1>Relevant Experiences</h1><br>
-    <p> let's just say that i'm working on this</p>
+<!-- EXPERIENCE -->
+<section id="experience">
+  <h2 class="section-heading">experience</h2>
+  <div class="exp-list">
 
-    
+    <div class="exp-item">
+      <div class="exp-period">may 2026 - current</div>
+      <div class="exp-right">
+        <div class="exp-role">Intern</div>
+        <div class="exp-company">NASA</div>
+        <p class="exp-desc">flying things in titan's atmosphere</p>
+      </div>
+    </div>
 
+    <div class="exp-item">
+      <div class="exp-period">aug 2024 - current</div>
+      <div class="exp-right">
+        <div class="exp-role">president of operations</div>
+        <div class="exp-company">ed w clark science olympiad</div>
+        <p class="exp-desc">las vegas invitational director and builder (occasionally)</p>
+      </div>
+    </div>
+
+ 
+  </div>
 </section>
 
-<style>
-    .dropdown-btn {
-        background-color: #e5eaf1;
-        color: #000000;
-        cursor: pointer;
-        padding: 12px 16px;
-        width: 100%;
-        border: none;
-        text-align: left;
-        outline: none;
-        font-size: 16px;
-        display: flex;
-        align-items: center;
-        transition: background-color 0.3s;
-        margin-bottom: 5px;
-        border-radius: 8px;
-    }
+<!-- PROJECTS -->
+<section id="projects">
+  <h2 class="section-heading">projects</h2>
+  <div class="projects-list">
 
-    .dropdown-btn:hover {
-        background-color: rgb(192, 189, 189)af1d;
-    }
+    <div class="project-item">
+      <div class="project-tag">2025</div>
+      <div>
+        <div class="project-name">meowl</div>
+        <p class="project-desc">stupid mod for stupid game</p>
+        <a class="project-link" href="https://www.curseforge.com/minecraft/mc-mods/meowl">view project →</a>
+      </div>
+    </div>
 
-    .dropdown-btn .arrow {
-        display: inline-block;
-        margin-right: 10px;
-        transition: transform 0.3s;
-    }
 
-    .dropdown-btn.active .arrow {
-        transform: rotate(90deg); /* rotates arrow to point down */
-    }
 
-    .dropdown-container {
-        display: none;
-        background-color: #fafafa;
-        padding: 0 16px 12px 16px;
-        text-align: left;
-        overflow: hidden;
-    }
+  </div>
+</section>
 
-    .dropdown-container ul {
-        margin: 5px 0 0 20px;
-    }
-</style>
+<!-- FOOTER -->
+<footer>
+  <a class="footer-contact" href="mailto:you@email.com">chenb26@unlv.nevada.edu</a>
+  <div class="footer-dot"></div>
+  <a class="footer-contact" href="https://www.linkedin.com/in/bethena-chen-4a711336a/" target="_blank">linkedin</a>
+  <div class="footer-dot"></div>
+  <a class="footer-contact" href="https://github.com/humanturtleduck" target="_blank">github</a>
+  <div class="footer-dot"></div>
+</footer>
 
 <script>
-    const dropdowns = document.querySelectorAll('.dropdown-btn');
-    dropdowns.forEach(btn => {
-        btn.addEventListener('click', function() {
-            this.classList.toggle('active');
-            const container = this.nextElementSibling;
+  // Photo upload
+  const input = document.getElementById('photo-input');
+  const preview = document.getElementById('preview-img');
+  const icon = document.getElementById('ph-icon');
 
-            if (container.style.display === 'block') {
-                container.style.display = 'none';
-            } else {
-                container.style.display = 'block';
-            }
-        });
+  // If an image src already exists (like the cat), show it and hide the placeholder
+  if (preview && preview.getAttribute('src')) {
+    preview.style.display = 'block';
+    if (icon) icon.style.display = 'none';
+  }
+
+  input.addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      preview.src = ev.target.result;
+      preview.style.display = 'block';
+      icon.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Scroll reveal
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach((entry, i) => {
+      if (entry.isIntersecting) {
+        setTimeout(() => entry.target.classList.add('visible'), i * 70);
+        observer.unobserve(entry.target);
+      }
     });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.exp-item, .project-item').forEach(el => observer.observe(el));
 </script>
-
-
-    <section id="projects" class="section">
-        <h1>Projects</h1>
-        <div class="projects-grid">
-            <a href="https://www.curseforge.com/minecraft/mc-mods/meowl" target="_blank" class="project-card">
-                <h3>Meowl</h3>
-                <p>utilized java, blockbench, and forge to hallucinate this up. </p>
-            </a>
-            <a href="https://humanturtleduckserver.xyz/" target="_blank" class="project-card">
-                <h3>Tennis for Two</h3>
-                <p>complicated pong using node.js and js</p>
-            </a>
-            <a href="https://clarkhsarchitecture.org/" target="_blank" class="project-card">
-                <h3>CHS Architecture Club</h3>
-                <p>architecture club at Ed W Clark High School</p>
-            </a>
-
-            <a href="zipf-visualizer.html" target="_blank" class="project-card">
-                <h3>zipf visualizer</h3>
-                <p>george zipf rolling in his grave rn - computational linguistics </p>
-            </a>
-            
-        </div>
-    </section>
-
-    <section id="contact" class="section">
-        <h1>Contact</h1>
-
-        <div class="contact-links">
-            <p><i class="fas fa-envelope"></i>Email: bethena.yixing.chen@Gmail.com</p>
-            <p><i class="fab fa-discord"></i>Discord: Humanturtleduck</p>
-            <p><a href="https://github.com/humanturtleduck"><i class="fab fa-github"></i>Github: Humanturtleduck</p></a>
-        </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2026 Humanturtleduck. All rights reserved.</p>
-    </footer>
-
 </body>
-
 </html>
